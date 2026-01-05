@@ -7,7 +7,7 @@ export async function GET(
   ctx: { params: Promise<{ slug: string }> }
 ) {
   try {
-    // ✅ unwrap params (Next says it's a Promise)
+   
     const { slug } = await ctx.params;
 
     const cleaned = slug?.trim();
@@ -25,6 +25,8 @@ export async function GET(
     if (!event) {
       return NextResponse.json({ error: "Event not found" }, { status: 404 });
     }
+
+    
 
     return NextResponse.json({ success: true, data: event }, { status: 200 });
   } catch (error) {
