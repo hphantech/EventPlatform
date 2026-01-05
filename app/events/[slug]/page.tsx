@@ -1,15 +1,12 @@
 import { Suspense } from "react";
-import { notFound } from "next/navigation";
 import EventDetails from "@/components/EventDetails";
 
-export default function EventDetailsPage({
+export default async function EventDetailsPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const slug = params?.slug;
-
-  if (!slug) return notFound();
+  const { slug } = await params;
 
   return (
     <main>
