@@ -1,21 +1,8 @@
-import { Suspense } from "react";
-import { notFound } from "next/navigation";
-import EventDetails from "@/components/EventDetails";
-
-export default function EventDetailsPage({
-  params,
-}: {
-  params: { slug: string };
-}) {
-  const slug = params?.slug;
-
-  if (!slug) return notFound();
-
+export default function Page({ params }: { params: { slug: string } }) {
   return (
-    <main>
-      <Suspense fallback={<div>Loading...</div>}>
-        <EventDetails slug={slug} />
-      </Suspense>
-    </main>
+    <div style={{ padding: 40 }}>
+      <h1>EVENT ROUTE OK</h1>
+      <p>slug: {params.slug}</p>
+    </div>
   );
 }
