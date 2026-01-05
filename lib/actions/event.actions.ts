@@ -29,3 +29,4 @@ export const getSimilarEvents = async (slug: string) => {
     return [];
   }
 };
+ 
