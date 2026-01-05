@@ -1,50 +1,69 @@
-export const events = [
+export type EventItem = {
+  image: string;
+  title: string;
+  slug: string;
+  location: string;
+  date: string; // e.g., "2025-11-07"
+  time: string; // e.g., "09:00 AM"
+};
+
+export const events: EventItem[] = [
   {
-    title: "React Conf 2026",
     image: "/images/event1.png",
-    slug: "react-conf-2026",
-    location: "Las Vegas, NV",
-    date: "May 15-16, 2026",
-    time: "9:00 AM - 6:00 PM"
+    title: "React Summit US 2025",
+    slug: "react-summit-us-2025",
+    location: "San Francisco, CA, USA",
+    date: "2025-11-07",
+    time: "09:00 AM",
   },
   {
-    title: "JSConf US 2026",
     image: "/images/event2.png",
-    slug: "jsconf-us-2026",
-    location: "Austin, TX",
-    date: "June 2-4, 2026",
-    time: "10:00 AM - 7:00 PM"
+    title: "KubeCon + CloudNativeCon Europe 2026",
+    slug: "kubecon-cloudnativecon-eu-2026",
+    location: "Vienna, Austria",
+    date: "2026-03-18",
+    time: "10:00 AM",
   },
   {
-    title: "Hackathon Global 2026",
     image: "/images/event3.png",
-    slug: "hackathon-global-2026",
-    location: "San Francisco, CA",
-    date: "July 10-12, 2026",
-    time: "8:00 AM - 10:00 PM"
+    title: "AWS re:Invent 2025",
+    slug: "aws-reinvent-2025",
+    location: "Las Vegas, NV, USA",
+    date: "2025-12-01",
+    time: "08:30 AM",
   },
   {
-    title: "Tech Meetup: AI & ML",
     image: "/images/event4.png",
-    slug: "tech-meetup-ai-ml",
-    location: "New York, NY",
-    date: "August 20, 2026",
-    time: "6:00 PM - 9:00 PM"
+    title: "Next.js Conf 2025",
+    slug: "nextjs-conf-2025",
+    location: "Los Angeles, CA, USA (Hybrid)",
+    date: "2025-11-12",
+    time: "09:30 AM",
   },
   {
-    title: "Node.js Interactive 2026",
     image: "/images/event5.png",
-    slug: "nodejs-interactive-2026",
-    location: "Vancouver, Canada",
-    date: "September 14-15, 2026",
-    time: "9:00 AM - 5:00 PM"
+    title: "Google Cloud Next 2026",
+    slug: "google-cloud-next-2026",
+    location: "San Jose, CA, USA",
+    date: "2026-04-07",
+    time: "09:00 AM",
   },
   {
-    title: "Web Summit 2026",
     image: "/images/event6.png",
-    slug: "web-summit-2026",
-    location: "Lisbon, Portugal",
-    date: "November 5-8, 2026",
-    time: "10:00 AM - 6:00 PM"
-  }
+    title: "ETHGlobal Hackathon: Paris 2026",
+    slug: "ethglobal-paris-2026",
+    location: "Paris, France",
+    date: "2026-07-10",
+    time: "10:00 AM",
+  },
+  {
+    image: "/images/events-full.png",
+    title: "Open Source Summit North America 2026",
+    slug: "oss-na-2026",
+    location: "Vancouver, Canada",
+    date: "2026-06-22",
+    time: "09:00 AM",
+  },
 ];
+
+export default events;
