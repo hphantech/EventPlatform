@@ -35,15 +35,14 @@ const EventTags = ({ tags }: { tags: string[] }) => (
     </div>
 )
 
-const EventDetails = async ({ params }: { params: Promise<string> }) => {
-    'use cache'
+const EventDetails = async ({ slug }: { slug: string }) => {
+    'use cache';
     cacheLife('hours');
-    const slug = await params;
 
     let event;
     try {
         const request = await fetch(`${BASE_URL}/api/events/${slug}`, {
-            next: { revalidate: 60 }
+            next: { revalidate: 60 },
         });
 
         if (!request.ok) {
@@ -66,7 +65,7 @@ const EventDetails = async ({ params }: { params: Promise<string> }) => {
 
     const { description, image, overview, date, time, location, mode, agenda, audience, tags, organizer } = event;
 
-    if(!description) return notFound();
+    if (!description) return notFound();
 
     const bookings = 10;
 
@@ -117,7 +116,7 @@ const EventDetails = async ({ params }: { params: Promise<string> }) => {
                             <p className="text-sm">
                                 Join {bookings} people who have already booked their spot!
                             </p>
-                        ): (
+                        ) : (
                             <p className="text-sm">Be the first to book your spot!</p>
                         )}
 
@@ -129,12 +128,13 @@ const EventDetails = async ({ params }: { params: Promise<string> }) => {
             <div className="flex w-full flex-col gap-4 pt-20">
                 <h2>Similar Events</h2>
                 <div className="events">
-                    {similarEvents.length > 0 && similarEvents.map((similarEvent: IEvent) => (
-                        <EventCard key={similarEvent.title} {...similarEvent} />
-                    ))}
+                    {similarEvents.length > 0 &&
+                        similarEvents.map((similarEvent: IEvent) => (
+                            <EventCard key={similarEvent.title} {...similarEvent} />
+                        ))}
                 </div>
             </div>
         </section>
-    )
-}
+    );
+};
 export default EventDetails
