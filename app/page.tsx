@@ -2,15 +2,23 @@ import ExploreBtn from '@/components/ExploreBtn'
 import NavBar from '@/components/NavBar'
 import React from 'react'
 import EventCard from '@/components/EventCard'
-import { time } from 'console'
-import { events as event, events } from '@/lib/constants'
+
 import { IEvent } from '@/database/event.model'
+
 
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
 const page = async () => {
-  const response = await fetch(`${BASE_URL}/api/events`, {cache: 'no-store'})
-  const { events } = await response.json()
+  let events = [];
+  try {
+    const response = await fetch(`${BASE_URL}/api/events`, { cache: 'no-store' });
+    if (response.ok) {
+      const data = await response.json();
+      events = data.events ?? [];
+    }
+  } catch (error) {
+    console.error("Failed to fetch events:", error);
+  }
 
   return (
     <section>

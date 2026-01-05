@@ -92,11 +92,29 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
     await connectToDatabase();
-    const events = await Event.find().sort({ createdAt: -1 });
-    return NextResponse.json({ events }, { status: 200 });
+    
+    const { searchParams } = new URL(req.url);
+    const page = parseInt(searchParams.get("page") || "1", 10);
+    const limit = parseInt(searchParams.get("limit") || "10", 10);
+    const skip = (page - 1) * limit;
+    
+    const [events, total] = await Promise.all([
+      Event.find().sort({ createdAt: -1 }).skip(skip).limit(limit),
+      Event.countDocuments(),
+    ]);
+    
+    return NextResponse.json({
+      events,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    }, { status: 200 });
   } catch (e) {
     console.error(e);
     return NextResponse.json(
