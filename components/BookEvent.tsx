@@ -1,48 +1,65 @@
-'use client'
-import React from 'react'
+'use client';
+
+import { createBooking } from '@/lib/actions/booking.actions';
+import posthog from 'posthog-js';
 import { useState } from 'react';
 
-const BookEvent = () => {
+const BookEvent = ({ eventId, slug }: { eventId: string; slug: string }) => {
+  const [email, setEmail] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-    const [email, setEmail] = useState('')
-    const [submitted, setSubmitted] = useState(false)
-    const handleSubmit = (e: React.FormEvent) => { 
-        e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (loading) return;
 
-        setTimeout(() => {
-            setSubmitted(true);
-        },1000);
+    setLoading(true);
 
-    
+    const { success } = await createBooking({ eventId, slug, email });
 
+    if (success) {
+      posthog.capture('event_booked', {
+        event_id: eventId,
+        event_slug: slug,
+        email_domain: email.split('@')[1] ?? 'unknown', // SAFE, not PII
+        source: 'event_page',
+      });
+
+      setSubmitted(true);
+    } else {
+      posthog.capture('booking_failed', {
+        event_id: eventId,
+        event_slug: slug,
+      });
+      setLoading(false);
     }
+  };
 
+  if (submitted) {
+    return <p className="text-sm">Thank you for booking your spot!</p>;
+  }
 
   return (
-    <div id="book-event">
-        {submitted ? (
-            <p className='text-sm'>Thank you for booking your spot!</p>
-        ) : (
-            <form onSubmit={handleSubmit}>
-                <div>
-                <label htmlFor="email" className="block text-sm font-medium mb-2">Email Address</label>
-                <input 
-                    type="email" 
-                    value={email} 
-                    onChange={(e) => setEmail(e.target.value)}
-                    id="email"
-                    placeholder='enter your email' />
-                    </div>
-                <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={(e) => {
-                    e.preventDefault();
-                    setSubmitted(true);
-                }}>Book Now</button>
-                    </form>
-        )}
-                    
-    </div>
-        
-  )
-}
+    <form onSubmit={handleSubmit}>
+      <label className="block text-sm font-medium mb-2">Email Address</label>
+      <input
+        type="email"
+        required
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="enter your email"
+      />
 
-export default BookEvent
+      <button
+        type="submit"
+        disabled={loading}
+        className="bg-blue-500 text-white px-4 py-2 rounded"
+      >
+        {loading ? 'Booking…' : 'Book Now'}
+      </button>
+    </form>
+  );
+};
+
+export default BookEvent;
+ 

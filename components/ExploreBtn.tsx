@@ -7,6 +7,7 @@ const ExploreBtn = () => {
   const handleClick = () => {
     posthog.capture('explore_events_clicked', {
       button_location: 'homepage_hero',
+      action: 'scroll_to_events', // Added more context to the event
     });
   };
 

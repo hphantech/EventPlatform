@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 // MongoDB connection string from environment variables
-const MONGODB_URI = process.env.MONGODB_URI;
+const MONGODB_URI = process.env.MONGODB_URI!; // Added non-null assertion to ensure TypeScript treats it as a string
 
 if (!MONGODB_URI) {
   throw new Error(
@@ -32,9 +32,9 @@ if (!global.mongoose) {
 
 /**
  * Establishes and maintains a connection to MongoDB using Mongoose
- * 
+ *
  * @returns Promise resolving to the Mongoose instance
- * 
+ *
  * This function implements connection caching to prevent multiple connections:
  * - In development: Caches connection globally to survive hot reloads
  * - In production: Prevents redundant connections across serverless function invocations
