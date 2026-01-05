@@ -1,14 +1,11 @@
-import React from "react";
 import { notFound } from "next/navigation";
-import type { IEvent } from "@/database";
-import { getSimilarEventsBySlug } from "@/lib/actions/event.actions";
 import Image from "next/image";
 import BookEvent from "@/components/BookEvent";
 import EventCard from "@/components/EventCard";
+import type { IEvent } from "@/database";
+import { getSimilarEventsBySlug } from "@/lib/actions/event.actions";
+import { getEventBySlug } from "@/lib/data/events";
 import { cacheLife } from "next/cache";
-import { getBaseUrl } from "@/lib/getBaseUrl";
-
-export const dynamic = "force-dynamic";
 
 const EventDetailItem = ({
   icon,
@@ -46,39 +43,13 @@ const EventTags = ({ tags }: { tags: string[] }) => (
   </div>
 );
 
-const EventDetails = async ({ slug }: { slug: string }) => {
+export default async function EventDetails({ slug }: { slug: string }) {
   "use cache";
   cacheLife("hours");
 
-  // ✅ Guard FIRST. Prevents /api/events/undefined during build/prerender.
   if (!slug) return notFound();
 
-  const baseUrl = getBaseUrl();
-
-  const request = await fetch(`${baseUrl}/api/events/${slug}`, {
-    cache: "no-store",
-    headers: { Accept: "application/json" },
-  });
-
-  if (!request.ok) {
-    if (request.status === 404) return notFound();
-    const text = await request.text().catch(() => "");
-    console.error("Failed to fetch event:", request.status, request.statusText, text.slice(0, 120));
-    return notFound();
-  }
-
-  const ct = request.headers.get("content-type") ?? "";
-  if (!ct.includes("application/json")) {
-    const text = await request.text().catch(() => "");
-    console.error("Non-JSON response when fetching event:", ct, text.slice(0, 120));
-    return notFound();
-  }
-
-  const response = await request.json();
-
-  // ✅ Your API returns { success: true, data: event }
-  const event = response?.data;
-
+  const event: any = await getEventBySlug(slug);
   if (!event?.description) return notFound();
 
   const {
@@ -89,9 +60,9 @@ const EventDetails = async ({ slug }: { slug: string }) => {
     time,
     location,
     mode,
-    agenda = [],
+    agenda,
     audience,
-    tags = [],
+    tags,
     organizer,
   } = event as {
     description: string;
@@ -156,6 +127,7 @@ const EventDetails = async ({ slug }: { slug: string }) => {
         <aside className="booking">
           <div className="signup-card">
             <h2>Book Your Spot</h2>
+
             {bookings > 0 ? (
               <p className="text-sm">
                 Join {bookings} people who have already booked their spot!
@@ -164,8 +136,7 @@ const EventDetails = async ({ slug }: { slug: string }) => {
               <p className="text-sm">Be the first to book your spot!</p>
             )}
 
-            {/* ✅ Use route slug, not event.slug */}
-            <BookEvent eventId={event._id} slug={slug} />
+            <BookEvent eventId={event._id.toString()} slug={event.slug} />
           </div>
         </aside>
       </div>
@@ -174,10 +145,11 @@ const EventDetails = async ({ slug }: { slug: string }) => {
         <h2>Similar Events</h2>
         <div className="events">
           {similarEvents.length > 0 ? (
-            similarEvents.map((similarEvent: any) => (
+            similarEvents.map((ev: any) => (
               <EventCard
-                key={(similarEvent._id ?? similarEvent.id ?? similarEvent.title)?.toString()}
-                {...similarEvent}
+                key={(ev._id ?? ev.id)?.toString()}
+                {...ev}
+                slug={ev.slug}
               />
             ))
           ) : (
@@ -187,6 +159,4 @@ const EventDetails = async ({ slug }: { slug: string }) => {
       </div>
     </section>
   );
-};
-
-export default EventDetails;
+}
